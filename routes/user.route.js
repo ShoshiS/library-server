@@ -1,34 +1,15 @@
-import users from '../users.js'
+//import users from '../users.js'
 import { Router } from 'express'
-
+import {getAllUser,sign_in,sign_up} from '../controllers/user.controller.js'
 const router = Router();
 
 //show all users
-router.get('/',(req,res)=>{
-    res.json(users)
-})
+router.get('/',getAllUser)
 
 //sign in
-router.get('/:username/:password',(req,res)=>{
-    const user = users.find(x=>x.userName === req.params.username)
-    if(!user)
-        return res.status(404).json({message: `user ${req.params.username} not found`})
-    if(user.password !== req.params.password)
-        return res.status(400).json({message: `password is incorect`})
-
-    res.json(user)
-})
+router.get('/:username/:password',sign_in)
 
 //sign up
-router.post('/sign-up',(req,res)=>{
+router.post('/sign-up',sign_up)
 
-    const {userName , password,email} =req.body
-    if(users.find(x=>x.userName===userName))
-        return res.status(400).json({message: `user ${userName} already exists`})
-
-    const newUser = {userName,password,email,borrowBooksArr:[]}
-    users.push(newUser)
-    res.send(newUser)
-})
-
-export default router
+export default router;
