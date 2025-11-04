@@ -29,6 +29,6 @@ A simple RESTful API for managing a collection of **books** and **users**, built
   `GET /users`
 - **Sign in.**  
   `GET /users/sign-in`
--**Sign up.**
-  `POST /users/sing-up`
+- **Sign up.**  
+  `POST /users/sign-up`
 
