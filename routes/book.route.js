@@ -1,12 +1,13 @@
 
 import { Router } from 'express'
+import { printCurrentDate } from '../middlewares/middlewaresDate.js';
 import {getAllBooks,getBookById,addBook,updateBook,borrowBook,returnBarrowedBook,deletBook} from '../controllers/book.controller.js'
 
 const router = Router();
 
-router.get('/',getAllBooks)
+router.get('/',printCurrentDate,getAllBooks)
 
-router.get('/:id',getBookById)
+router.get('/:id',printCurrentDate,getBookById)
 
 router.post('/',addBook)
 

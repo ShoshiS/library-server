@@ -6,10 +6,11 @@ export const getAllUser= (req,res)=>{
 }
 
  export const sign_in =(req,res)=>{
-    const user = users.find(x=>x.userName === req.params.username)
+     const {userName , password} =req.body
+    const user = users.find(x=>x.userName === userName)
     if(!user)
-        return res.status(404).json({message: `user ${req.params.username} not found`})
-    if(user.password !== req.params.password)
+        return res.status(404).json({message: `user ${userName} not found`})
+    if(user.password !== password)
         return res.status(400).json({message: `password is incorect`})
 
     res.json(user)
