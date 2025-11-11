@@ -1,5 +1,6 @@
 import books from '../db.js'
 import users from '../users.js'
+import { errorRouteHandler } from '../middlewares/errors.middlewares.js'
 
 //get all books
 export const getAllBooks = (req,res)=>{
@@ -14,26 +15,33 @@ export const getAllBooks = (req,res)=>{
 }
 
 //get book by id
-export const getBookById = (req,res)=>{
+export const getBookById = (req,res,next)=>{
+
     const book = books.find(x=>x.id === +req.params.id)
-    if (!book) return res.status(404).json( {message:`book ${req.params.id} not found`});
+
+    if (!book) 
+        next({status: 404 , message: `book ${req.params.id} not found`})
+
     res.json(book)
 }
 
 //add book
 export const addBook = (req,res)=>{
+
     books.push(req.body)
+
     res.send(req.body)
 }
 
 //update book
 export const updateBook = (req,res)=>{
-    const book = books.find(x=>x.id ===parseInt(req.params.id))
-    if (!book)
-        return res.status(404).json({message:`book ${req.params.id} not found`});
 
+    const book = books.find(x=>x.id ===parseInt(req.params.id))
+    
+    if (!book)
+        next({status: 404, message: `book ${req.params.id} not found`});
     if(parseInt(req.params.id)!==req.body.id)
-        return res.status(409).json({message:`id in body not match to params id`})
+        next({status :409,message:`id in body not match to params id`});
     
     const {name , category,price} = req.body
     book.name = name
@@ -53,11 +61,11 @@ export const borrowBook =(req,res)=>{
     const user = users.find(x=>x.userName === userName)
 
     if (!book)
-        return res.status(404).json({message:`book ${id} not found`});
+        next({status: 404 ,message: `book ${id} not found`});
     if(book.isBorrowed===true)
-        return res.status(400).json({message:'Book is already borrowed'})
+        next({status: 400, message:'Book is already borrowed'})
     if(!user)
-        return res.status(404).json({message:`user ${userName} not found`})
+        next({status: 404 ,message:`user ${user} not found`});
 
     book.isBorrowed = true
     book.borrowArr.push({name:userName,date:new Date()})
@@ -70,8 +78,9 @@ export const borrowBook =(req,res)=>{
 export const returnBarrowedBook = (req,res)=>{
     const id = +(req.params.id)
     const book = books.find(x=>x.id === id)  
+    
     if (!book)
-        return res.status(404).json({message:`book ${id} not found`});
+        next({status: 404 ,message: `book ${id} not found`});
     
     const user = users.find(x=>x.userName === book.borrowArr[book.borrowArr.length-1].name)
     user.borrowBooksArr = user.borrowBooksArr.filter(x=>x!==id)
@@ -84,7 +93,7 @@ export const returnBarrowedBook = (req,res)=>{
 export const deletBook = (req,res)=>{
     const index = books.findIndex(x => x.id === parseInt(req.params.id))
     if (index === -1)
-        return res.status(404).json({message:`book ${req.params.id} not found`})
+        next({status: 404 , message: `book ${req.params.id} nod fount`});
     books.splice(index, 1);
     res.status(204).end();
 }
