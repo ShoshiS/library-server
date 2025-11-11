@@ -1,6 +1,6 @@
 
 import { Router } from 'express'
-import { printCurrentDate } from '../middlewares/middlewaresDate.js';
+import { printCurrentDate } from '../middlewares/date.middlewares.js';
 import {getAllBooks,getBookById,addBook,updateBook,borrowBook,returnBarrowedBook,deletBook} from '../controllers/book.controller.js'
 
 const router = Router();

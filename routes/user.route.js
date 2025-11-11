@@ -1,6 +1,6 @@
 //import users from '../users.js'
 import { Router } from 'express'
-import { printCurrentDate } from '../middlewares/middlewaresDate.js';
+import { printCurrentDate } from '../middlewares/date.middlewares.js';
 import {getAllUser,sign_in,sign_up} from '../controllers/user.controller.js'
 const router = Router();
 
