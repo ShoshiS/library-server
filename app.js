@@ -4,11 +4,13 @@ import usersRouter from './routes/user.route.js'
 import {addCurrentDate }from './middlewares/date.middlewares.js'
 import { errorHandler, errorRouteHandler } from './middlewares/errors.middlewares.js';
 import cros from 'cros';
+import morgan from 'morgan';
 
 const app = express();
 
 app.use(addCurrentDate);
 
+app.use(morgan('dev'))
 app.use(cros());
 
 
