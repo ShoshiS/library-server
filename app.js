@@ -3,13 +3,17 @@ import booksRouter from './routes/book.route.js'
 import usersRouter from './routes/user.route.js'
 import {addCurrentDate }from './middlewares/date.middlewares.js'
 import { errorHandler, errorRouteHandler } from './middlewares/errors.middlewares.js';
+import cros from 'cros';
 
 const app = express();
 
-app.use(addCurrentDate)
+app.use(addCurrentDate);
 
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(cros());
+
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 
 app.use('/books', booksRouter);
