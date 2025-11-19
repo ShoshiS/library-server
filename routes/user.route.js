@@ -1,16 +1,16 @@
 //import users from '../users.js'
 import { Router } from 'express'
 import { printCurrentDate } from '../middlewares/date.middlewares.js';
-import {getAllUser,sign_in,sign_up} from '../controllers/user.controller.js'
+import {getAllUser,login,register} from '../controllers/user.controller.js'
 const router = Router();
 
 //show all users
 router.get('/',printCurrentDate,getAllUser)
 
 //sign in
-router.post('/',sign_in)
+router.post('/',login)
 
 //sign up
-router.post('/sign-up',sign_up)
+router.post('/register',register)
 
 export default router;

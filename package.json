@@ -6,15 +6,16 @@
   "type": "module",
   "scripts": {
     "start": "app.js",
-    "dev": "node --watch app",
+    "dev": "node --watch app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cros": "^1.1.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
+    "joi": "^18.0.2",
     "morgan": "^1.10.1"
   }
 }

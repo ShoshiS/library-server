@@ -14,7 +14,6 @@ export const errorHandler = (err, req, res, next) => {
 
 export const errorRouteHandler = (req,res,next) =>{
 
-    next({ message: `Route Not Found` ,
-           type: 'not Found',
-           url: req.originalUrl})
+    next({ message: `Route Not Found` 
+           })
 }
