@@ -45,11 +45,11 @@ export const register=(req,res,next)=>{
 export const update = (req,res,next)=>{
         
     const user = login();
-    
+    user = user.find(x=>x.userName ===parseInt(req.params.userName))
 
-    
-    const {userName , password, phone, email} = req.body
-    user.userName = userName
+
+    const {userName, password, phone, email} = req.body
+
     user.password = password
     user.phone = phone
     user.email = email

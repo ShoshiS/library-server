@@ -1,6 +1,6 @@
 import books from '../db.js'
 import users from '../users.js'
-import { errorRouteHandler } from '../middlewares/errors.middlewares.js'
+import validateBook from '../models/book.model.js'
 
 //get all books
 export const getAllBooks = (req,res)=>{
@@ -28,6 +28,9 @@ export const getBookById = (req,res,next)=>{
 //add book
 export const addBook = (req,res)=>{
 
+    const {error} = validateBook.validateBook.validate(req.body)
+    if(error)
+        return next({status:400 ,message: error.details[0].message})
     books.push(req.body)
 
     res.send(req.body)
