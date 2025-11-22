@@ -1,4 +1,4 @@
-//import users from '../users.js'
+
 import { Router } from 'express'
 import { printCurrentDate } from '../middlewares/date.middlewares.js';
 import {getAllUser,login,register,update} from '../controllers/user.controller.js'

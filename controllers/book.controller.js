@@ -15,9 +15,14 @@ export const getAllBooks = (req,res)=>{
 }
 
 //get book by id
-export const getBookById = (req,res,next)=>{
+export const getBookById = (req,res,next,next)=>{
+
 
     const book = books.find(x=>x.id === +req.params.id)
+
+    if (!book) 
+        next({status: 404 , message: `book ${req.params.id} not found`})
+
 
     if (!book) 
         next({status: 404 , message: `book ${req.params.id} not found`})
@@ -65,9 +70,12 @@ export const borrowBook =(req,res)=>{
 
     if (!book)
         next({status: 404 ,message: `book ${id} not found`});
+        next({status: 404 ,message: `book ${id} not found`});
     if(book.isBorrowed===true)
         next({status: 400, message:'Book is already borrowed'})
+        next({status: 400, message:'Book is already borrowed'})
     if(!user)
+        next({status: 404 ,message:`user ${user} not found`});
         next({status: 404 ,message:`user ${user} not found`});
 
     book.isBorrowed = true
@@ -82,7 +90,9 @@ export const returnBarrowedBook = (req,res)=>{
     const id = +(req.params.id)
     const book = books.find(x=>x.id === id)  
     
+    
     if (!book)
+        next({status: 404 ,message: `book ${id} not found`});
         next({status: 404 ,message: `book ${id} not found`});
     
     const user = users.find(x=>x.userName === book.borrowArr[book.borrowArr.length-1].name)
@@ -96,6 +106,7 @@ export const returnBarrowedBook = (req,res)=>{
 export const deletBook = (req,res)=>{
     const index = books.findIndex(x => x.id === parseInt(req.params.id))
     if (index === -1)
+        next({status: 404 , message: `book ${req.params.id} nod fount`});
         next({status: 404 , message: `book ${req.params.id} nod fount`});
     books.splice(index, 1);
     res.status(204).end();
