@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { update } from '../controllers/user.controller'
+import { update } from '../controllers/user.controller.js'
 
 const validateUser ={
     login: Joi.object({

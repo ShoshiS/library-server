@@ -2,6 +2,7 @@
 import { Router } from 'express'
 import { printCurrentDate } from '../middlewares/date.middlewares.js';
 import {getAllBooks,getBookById,addBook,updateBook,borrowBook,returnBarrowedBook,deletBook} from '../controllers/book.controller.js'
+import { upload } from '../middlewares/upload_file.middleware.js';
 
 const router = Router();
 
@@ -9,7 +10,7 @@ router.get('/',printCurrentDate,getAllBooks)
 
 router.get('/:id',printCurrentDate,getBookById)
 
-router.post('/',addBook)
+router.post('/',upload.single('img'),addBook)
 
 router.put('/:id',updateBook)
 
