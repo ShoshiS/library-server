@@ -29,7 +29,7 @@ app.use('/users',usersRouter);
 app.use(errorRouteHandler)
 app.use(errorHandler)
 
-const port = 5000
-app.listen(port,()=>{
-    console.log('wellcome to my site');
-})
+const port = process.env.PORT ?? 5000;
+app.listen(port, () => {
+    console.log(`Example app listening on http://localhost:${port}`)
+});
