@@ -1,63 +1,87 @@
 import books from '../db.js'
 import users from '../users.js'
 import validateBook from '../models/book.model.js'
+import { Book } from '../models/book.model.js'
+import { isValidObjectId } from 'mongoose'
 
 //get all books
-export const getAllBooks = (req,res)=>{
-    const {page =1 , limit =5,name =''} = req.query
-    parseInt(page)
-    parseInt(limit)
-    const result = books
-        .filter(b => b.name.includes(name))
-        .slice((page-1)*limit , page*limit)
+export const getAllBooks = async (req,res,next)=>{
 
-    res.json(result)
+    const {page =1 , limit =5,name =''} = req.query
+
+    try{
+        const result = await Book.find({ name: new RegExp(name,'i')})
+        .skip( (page-1) *limit)
+        .limit(parseInt(limit));
+
+        res.json(result)
+    }
+    catch(error){
+        next({})
+    } 
 }
 
 //get book by id
-export const getBookById = (req,res,next)=>{
+export const getBookById = async(req,res,next)=>{
+    const {id} = req.params
 
-    const book = books.find(x=>x.id === +req.params.id)
+    try{
+        if(!isValidObjectId(id))
+            next({status: 404, message: `ID invalid`});
 
-    if (!book) 
-        next({status: 404 , message: `book ${req.params.id} not found`})
+        const book = await Book.findById(id)
 
-    res.json(book)
+         if (!book)
+            next({status: 404, message: `book ${req.params.id} not found`});
+
+        res.json(book)    
+    }
+    catch(error){
+        next({status: error.status, message: error.message})
+    }
 }
 
 //add book
-export const addBook = (req,res,next)=>{
+export const addBook = async (req,res,next)=>{
 
-    const {error} = validateBook.validateBook.validate(req.body)
+    const {error} = validateBook.validate(req.body);
     if(error)
-        return next({status:400 ,message: error.details[0].message})
+        return next({status:400 ,message: error.details[0].message});
+    
+    try{
+        const newbook = new Book({
+            ...req.body,
+            img: req.file?.path
+        });
 
-        const newbook = {
-        ...req.body,
-        img: req.file.path
+        await newbook.save();
+
+        res.send(req.body);
     }
-
-    books.push(newbook)
-
-    res.send(req.body)
+    catch(error){
+        next({})
+    }
 }
 
 //update book
-export const updateBook = (req,res,next)=>{
+export const updateBook = async (req,res,next)=>{
 
-    const book = books.find(x=>x.id ===parseInt(req.params.id))
-    
-    if (!book)
-        next({status: 404, message: `book ${req.params.id} not found`});
-    if(parseInt(req.params.id)!==req.body.id)
-        next({status :409,message:`id in body not match to params id`});
-    
-    const {name , category,price} = req.body
-    book.name = name
-    book.category = category
-    book.price = price
+    const {id} = req.params
+    try{
+        const book = await Book.findByIdAndUpdate(id,
+            { $set: req.body },
+            {new: true}
+        )
+        if (!book)
+            next({status: 404, message: `book ${req.params.id} not found`});
+        if(Number(req.params.id)!==req.body.id)
+            next({status :409,message:`id in body not match to params id`});
     
     res.json(book)
+    }
+    catch(error){
+        next({})
+    }
 }
 
 //borrow book
@@ -99,10 +123,20 @@ export const returnBarrowedBook = (req,res,next)=>{
 }
 
 //delet book
-export const deletBook = (req,res,next)=>{
-    const index = books.findIndex(x => x.id === parseInt(req.params.id))
-    if (index === -1)
-        next({status: 404 , message: `book ${req.params.id} nod fount`});
-    books.splice(index, 1);
-    res.status(204).end();
+export const deletBook = async (req,res,next)=>{
+    
+   const {id} = req.params
+
+    try{
+        const book = await Book.findByIdAndUpdate(id,{
+            $set: req.body
+        })
+        if (!book)
+            next({status: 404 , message: `book ${req.params.id} nod fount`});
+    
+     res.status(204).end();
+    }
+    catch(error){
+        next({})
+    }
 }
