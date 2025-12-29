@@ -1,5 +1,23 @@
 import Joi from 'joi'
+import {model,Schema} from 'mongoose'
+import bcrypt from 'bcryptjs'
 import { update } from '../controllers/user.controller.js'
+
+
+const userSchema = new Schema({
+    userName: {type: String , unique: true},
+    password: String,
+    email: String,
+    phone: String
+})
+
+userSchema.pre('save',function(){
+    const salt = bcrypt.genSaltSync(12)
+    const hash = bcrypt.hashSync(this.password, salt)
+    this.password = hash
+})
+
+export const User = model('User',userSchema)
 
 const validateUser ={
     login: Joi.object({

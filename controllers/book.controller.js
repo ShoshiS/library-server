@@ -17,7 +17,7 @@ export const getAllBooks = async (req,res,next)=>{
         res.json(result)
     }
     catch(error){
-        next({})
+        next({message: error.message})
     } 
 }
 
@@ -137,6 +137,6 @@ export const deletBook = async (req,res,next)=>{
      res.status(204).end();
     }
     catch(error){
-        next({})
+        next({message: error.message})
     }
 }

@@ -1,46 +1,67 @@
 import users from '../users.js'
-import { errorRouteHandler } from '../middlewares/errors.middlewares.js'
 import validateUser from '../models/user.model.js'
+import { User} from '../models/user.model.js'
+import bcrypt from 'bcryptjs'
 
 
-export const getAllUser= (req,res)=>{
-    res.json(users)
+export const getAllUser= async (req,res)=>{
+    try {
+        const users = await User.find({});
+        res.status(200).json(users);
+    }
+    catch (error) {
+        next({ status: 500, message: error.message });
+    }
 }
 
- export const login =(req,res,next)=>{
+ export const login = async (req,res,next) => {
+    try{
+        const {userName , password} =req.body
+        
+        const {error} = validateUser.login.validate(req.body)
+        if(error) 
+            return next({ status: 400, message: error.details[0].message });
 
-    const {useruserName , password} =req.body
-    
-    const {error} = validateUser.login.validate(req.body)
-    if(error) 
-        return next({ status: 400, message: error.details[0].message });
-    
-    const user = users.find(x=>x.useruserName === useruserName)
+        const user = await User.findOne({ userName })
+        if(!user)
+            return next({ status: 404, message: `User ${userName} not found` });
+        
+        const isMatch = bcrypt.compareSync(password, user.password);
+        if (!isMatch)
+            return next({ status: 400, message: 'password is incorrect' });
 
-    if(!user)
-        return next({ status: 404, message: `User ${useruserName} not found` });
-    if(user.password !== password)
-        return next({status:400 ,message: `password is incorect`});
 
-    res.json(user)
+        res.status(200).json(user)
+    }
+    catch(error){
+        next({status: 500, message: error.message})
+    }
 }
 
-export const register=(req,res,next)=>{
 
-    const {useruserName, password, email, phone} =req.body
+export const register = async (req, res, next) => {
+    const { userName } = req.body;
 
-    const {error} = validateUser.register.validate(req.body)
-    if(error)
-        return next({status:400 ,message: error.details[0].message})
+    const { error } = validateUser.register.validate(req.body)
+    if (error) {
+        return next({ status: 400, message: error.details[0].message })
+    }
 
-    if(users.find(x=>x.useruserName===useruserName))
-       return next({status:400 ,message: `user ${useruserName} already exists`})
+    try {
+        const existingUser = await User.findOne({ userName })
+        if (existingUser) {
+            return next({status: 400, message: `user ${userName} already exists`})
+        }
 
-    const newUser = {useruserName,password,email,phone,borrowusersArr:[]}
-    users.push(newUser)
+        const newUser = new User(req.body);
+        await newUser.save();
 
-    res.send(newUser)
-}
+        return res.status(201).json(newUser);
+    } catch (error) {
+        return next({ status: 500, message: error.message });
+    }
+};
+
 
 export const update = (req,res,next)=>{
         

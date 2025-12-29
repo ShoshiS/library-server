@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import path from 'path'
 import { fileURLToPath } from 'url';
 import booksRouter from './routes/book.route.js'
 import usersRouter from './routes/user.route.js'
