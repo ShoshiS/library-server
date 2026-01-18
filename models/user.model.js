@@ -8,7 +8,8 @@ const userSchema = new Schema({
     userName: {type: String , unique: true},
     password: String,
     email: String,
-    phone: String
+    phone: String,
+    role: { type:String, enums: ['admin', 'user'], required: true }
 })
 
 userSchema.pre('save',function(){
