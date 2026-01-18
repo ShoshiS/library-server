@@ -4,7 +4,7 @@ import { User} from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
 
 
-export const getAllUser= async (req,res)=>{
+export const getAllUser= async (req,res,next)=>{
     try {
         const users = await User.find({});
         res.status(200).json(users);
@@ -15,21 +15,18 @@ export const getAllUser= async (req,res)=>{
 }
 
  export const login = async (req,res,next) => {
+    
     try{
         const {userName , password} =req.body
-        
         const {error} = validateUser.login.validate(req.body)
+        
         if(error) 
             return next({ status: 400, message: error.details[0].message });
 
         const user = await User.findOne({ userName })
-        if(!user)
-            return next({ status: 404, message: `User ${userName} not found` });
-        
-        const isMatch = bcrypt.compareSync(password, user.password);
-        if (!isMatch)
-            return next({ status: 400, message: 'password is incorrect' });
 
+        if(!user || !user.comparePasswords(password))
+            return next({ status: 404, message: `email/password invalid` });
 
         res.status(200).json(user)
     }

@@ -17,6 +17,22 @@ userSchema.pre('save',function(){
     this.password = hash
 })
 
+userSchema.method('comparePasswords', function (newPassword){
+
+    const isEqual = bcrypt.compareSync(newPassword, this.password)
+
+    return isEqual
+})
+
+userSchema.set('toJSON',{
+    virtuals: true,
+    transform(doc, converted){
+        delete converted.__v
+        delete converted._id
+        delete converted.password
+    }
+})
+
 export const User = model('User',userSchema)
 
 const validateUser ={
@@ -24,8 +40,7 @@ const validateUser ={
 
         userName: 
             Joi.string()
-            .pattern(/[a-z]/)
-            .pattern(/[A-Z]/)
+            .pattern(/^[A-Za-z]+$/)
             .required(),
         password: 
             Joi.string()
@@ -34,8 +49,8 @@ const validateUser ={
             .pattern(/^[A-Z a-z 0-9 @!?*&%$]+$/)
             .required()
     }),
-    register: Joi.object({
 
+    register: Joi.object({
         userName: 
             Joi.string()
             .pattern(/^[A-Za-z]+$/)
