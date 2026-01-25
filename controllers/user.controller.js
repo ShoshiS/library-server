@@ -1,6 +1,6 @@
 import users from '../users.js'
 import validateUser from '../models/user.model.js'
-import { User} from '../models/user.model.js'
+import  {User, generateToken} from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
 
 
@@ -26,12 +26,13 @@ export const getAllUser= async (req,res,next)=>{
         const user = await User.findOne({ userName })
 
         if(!user || !user.comparePasswords(password))
-            return next({ status: 404, message: `email/password invalid` });
+            return next({ status: 403, message: `Authentication failed` });
 
-        res.status(200).json(user)
+        const token = generateToken({ user_id: user._id, role: user.role })
+        return res.json({ token: token });
     }
     catch(error){
-        next({status: 500, message: error.message})
+        next({ status: 403, message: `Authentication failed` });
     }
 }
 
